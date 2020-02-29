@@ -2,21 +2,22 @@ require 'net/https'
 require 'uri'
 require 'json'
 require 'date'
+require 'twitter'
 require "active_support/time"
 require 'dotenv'
 Dotenv.load
-
-# total aa commits in this week
-# xx / yy (日): zz commits
 
 t = Time.now
 arr_per_commits = [0, 0, 0, 0, 0, 0, 0]
 my_github_account = ENV['MY_GITHUB_ACCOUNT']
 tweet_texts =[]
 
-# puts t
-# puts my_github_account
-# github_push_events_datas = "https://api.github.com/users/toshi-ue/events"
+
+def time_ja(time, commit_sum)
+  "#{time.strftime("%m")}/#{time.strftime("%d")}" \
+  "(#{%w(日 月 火 水 木 金 土)[time.wday]}): #{commit_sum.to_s}commits"
+end
+
 
 github_push_events_datas = "https://api.github.com/users/#{my_github_account}/events"
 
@@ -35,4 +36,22 @@ results = JSON.parse(json)
   end
 end
 
-puts arr_per_commits
+# Twitter投稿用のテキストを作成
+tweet_texts.push("total #{arr_per_commits.sum}commits in this week.")
+(arr_per_commits.reverse).each_with_index do |c, idx|
+  tweet_texts.push(time_ja(t - (6 - idx).day, c))
+end
+
+# Tweetする(などの処理用, REST)ための接続に使用
+@client = Twitter::REST::Client.new do |config|
+  config.consumer_key        = ENV['TWITTER_CONSUMER_API_KEY']
+  config.consumer_secret     = ENV['YOUR_CONSUMER_API_SECRET_KEY']
+  config.access_token        = ENV['TWITTER_ACCESS_TOKEN']
+  config.access_token_secret = ENV['TWITTER_ACCESS_TOKEN_SECRET']
+end
+
+@client.update(tweet_texts.join("\n"))
+
+# [Rubyで曜日を求める方法を現役エンジニアが解説【初心者向け】 | TechAcademyマガジン](https://techacademy.jp/magazine/21762)
+
+# [指定フォーマットで文字列に変換する - 日付(Date、DateTime)クラス - Ruby入門](https://www.javadrive.jp/ruby/date_class/index5.html)
