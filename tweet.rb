@@ -8,6 +8,7 @@ require 'dotenv'
 Dotenv.load
 
 t = Time.now
+t_1day_ago = t - 1.day
 arr_per_commits = [0, 0, 0, 0, 0, 0, 0]
 my_github_account = ENV['MY_GITHUB_ACCOUNT']
 tweet_texts =[]
@@ -29,7 +30,7 @@ results = JSON.parse(json)
   results.select do |r|
     str_time = r["created_at"].in_time_zone("UTC").in_time_zone
     if(r["type"] == "PushEvent")
-      if(str_time >= (t - num.day).beginning_of_day && str_time <= (t - num.day).end_of_day)
+      if((str_time >= (t_1day_ago - num.day).beginning_of_day) && (str_time <= (t_1day_ago - num.day).end_of_day))
         arr_per_commits[num] += 1
       end
     end
@@ -37,9 +38,10 @@ results = JSON.parse(json)
 end
 
 # Twitter投稿用のテキストを作成
-tweet_texts.push("total #{arr_per_commits.sum}commits in this week.")
+tweet_texts.push("total #{arr_per_commits.sum}commits in last week.")
+
 (arr_per_commits.reverse).each_with_index do |c, idx|
-  tweet_texts.push(time_ja(t - (6 - idx).day, c))
+  tweet_texts.push(time_ja(t - (7 - idx).day, c))
 end
 
 # Tweetする(などの処理用, REST)ための接続に使用
