@@ -9,5 +9,5 @@ end
 # URL'/random_tweet'でアクセス
 get '/tweet_1week_commits' do
   Tweet.new.tweet_1week_commits
-  'Please check your tweet'
+  # 'Please check your tweet'
 end
