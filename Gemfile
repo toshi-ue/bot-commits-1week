@@ -8,4 +8,9 @@ gem "sinatra"
 gem "twitter"
 gem "dotenv"
 gem "activesupport"
-# gem 'pry-byebug'
+
+group :development, :test do
+  gem 'pry-byebug'
+  gem "ruby-debug-ide"
+  gem "debase"
+end
