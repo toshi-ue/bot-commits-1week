@@ -67,7 +67,7 @@ class Tweet
   end
 end
 
-# Tweet.new.tweet_1week_commits
+Tweet.new.tweet_1week_commits
 
 # Tweet.new.tweet_1week_commits
 
