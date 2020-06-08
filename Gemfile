@@ -6,10 +6,11 @@ ruby '2.5.7'
 
 git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 
+gem "activesupport"
+gem "dotenv"
+gem 'nokogiri'
 gem "sinatra"
 gem "twitter"
-gem "dotenv"
-gem "activesupport"
 
 group :development, :test do
   gem 'pry-byebug'
